@@ -42,13 +42,15 @@ class Desktop:
     def showMenu(self):
         if self.estadoMenu:
             self.lfInicio = LabelFrame(self.ventana, padx=30, pady=40)
-            self.lfInicio.place(x=0, y=580)
+            self.lfInicio.place(x=0, y=555)
             self.btnPanel = Button(self.lfInicio, text=" Panel ", command=self.cerrarMenu)
             self.btnPanel.grid(row=1,column=1)
             self.btnExplorador = Button(self.lfInicio, text=" Explorador ", command=self.cerrarMenu)
             self.btnExplorador.grid(row=2, column=1)
-            self.btnApagar = Button(self.lfInicio, text=" Explorador ", command=self.apagar)
-            self.btnApagar.grid(row=3, column=1)
+            self.btnCerrarSesion = Button(self.lfInicio, text=" Cerrar Sesion ", command=self.cerrarSesion)
+            self.btnCerrarSesion.grid(row=3, column=1)
+            self.btnApagar = Button(self.lfInicio, text=" Apagar ", command=self.apagar)
+            self.btnApagar.grid(row=4, column=1)
             self.estadoMenu=False
         else:
             self.cerrarMenu()
@@ -58,6 +60,10 @@ class Desktop:
             self.lfInicio.destroy()
 
     def apagar(self):
+        self.ventana.quit()
+        self.ventana.destroy()
+
+    def cerrarSesion(self):
         self.ventana.quit()
         self.ventana.destroy()
     #-------------------------------------------------------------------------------------------------------------------
