@@ -1,13 +1,14 @@
 from tkinter import *
 from Interface.User import User
 from tkinter import messagebox
-
+from Archivos.lectorJSON import lectorJSON
 
 class Login:
 
     def __init__(self):
         self.ventana = Tk()
-        self.users = [User("Public", "",False,"imagenes/public.png"), User("Samuel", "12345",True,"imagenes/default.png")]
+        self.lj = lectorJSON()
+        self.users = self.lj.leerJSON()
         self.widgets()
 
 
@@ -21,7 +22,7 @@ class Login:
 
     def usersView(self):
         self.lfUsers = LabelFrame(self.ventana, padx=100, pady=100)
-        self.lfUsers.place(x=633, y=334)
+        self.lfUsers.place(x=450, y=280)
         user = self.getUsers()
         column = 1
         self.images = []
@@ -44,6 +45,7 @@ class Login:
                 userLogged = user
         if userLogged:
             self.ventana.destroy()
+            userLogged.setUsuarios(self.users)
             userLogged.iniciar()
         else:
             messagebox.showinfo(message="Password Wrong", title="Password Wrong")
@@ -53,19 +55,25 @@ class Login:
 
 
     def loginUser(self,name):
-        self.lfUsers.destroy()
-        self.ventana.update()
-        password = StringVar()
-        self.lflogin = LabelFrame(self.ventana,text=name, padx=100, pady=100)
-        self.lflogin.place(x=633, y=334)
-        Label(self.lflogin, image=self.images[self.users.index(self.getUser(name))]).grid(row=1, column=1)
-        Label(self.lflogin, text='password:').grid(row=2, column=1)
-        lpassword = Entry(self.lflogin, show="*", textvariable=password, width=15).grid(row=2, column=2)
-        btnAgregar = Button(self.lflogin, text=" Login ",command=lambda:self.validar(name,password.get()))
-        btnAgregar.grid(row=3, column=1)
+        user = self.getUser(name)
+        if len(user.getPassword())==0:
+            self.ventana.destroy()
+            user.iniciar()
+        else:
+            self.lfUsers.destroy()
+            self.ventana.update()
+            password = StringVar()
+            self.lflogin = LabelFrame(self.ventana,text=name, padx=100, pady=100)
+            self.lflogin.place(x=450, y=280)
+            Label(self.lflogin, image=self.images[self.users.index(user)]).grid(row=1, column=1)
+            Label(self.lflogin, text='password:').grid(row=2, column=1)
+            lpassword = Entry(self.lflogin, show="*", textvariable=password, width=15).grid(row=2, column=2)
+            btnLogear = Button(self.lflogin, text=" Login ",command=lambda:self.validar(name,password.get()))
+            btnLogear.grid(row=3, column=1)
 
-        btnRetroceder = Button(self.lflogin, text=" Go back ", command=lambda: self.goBack())
-        btnRetroceder.grid(row=4, column=1)
+            btnRetroceder = Button(self.lflogin, text=" Go back ", command=lambda: self.goBack())
+            btnRetroceder.grid(row=4, column=1)
+
     def getUser(self,name):
         for u in self.users:
             if name==u.name:

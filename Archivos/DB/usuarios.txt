@@ -1,0 +1,16 @@
+{
+"users":
+  [
+    {"name": "Public",
+      "password": "",
+      "admin": "False",
+      "imagePath": "imagenes/public.png"
+    },
+    {
+      "name": "Samuel",
+      "password": "12345",
+      "admin": "True",
+      "imagePath": "imagenes/default.png"
+    }
+  ]
+}

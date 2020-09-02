@@ -1,6 +1,6 @@
 from tkinter import *
 from Interface.Login import Login
-
+import os
 
 def comenzar(ventana):
     ventana.mainloop()
@@ -12,6 +12,7 @@ def cerrar(ventana):
 
 
 if __name__ == '__main__':
+    #os.system("C:\Program Files (x86)\Windows Live\Photo Gallery\WLXPhotoGallery.exe"+" "+"C:/Users/Samuel/Pictures/11A.jpg")
     venta = Tk()
     venta.wm_attributes('-fullscreen','true')
     venta.geometry('1366x768')
