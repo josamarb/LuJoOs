@@ -55,7 +55,7 @@ class Desktop:
     def showMenu(self):
         if self.estadoMenu:
             self.lfInicio = LabelFrame(self.ventana, padx=30, pady=40)
-            self.lfInicio.place(x=0, y=455)
+            self.lfInicio.place(x=0, y=500)
             self.btnCrearUsuario = Button(self.lfInicio, text=" Crear Usuario ", command=self.ventanaCrearusuarios)
             self.btnCrearUsuario.grid(row=1,column=1)
             self.btnAdministrarusuario = Button(self.lfInicio, text=" Administrar Usuarios ", command=self.ventanaAdministrarUsuarios)
@@ -107,24 +107,40 @@ class Desktop:
             pass
 
     def ventanaEditarUsuarios(self,user):
-        if self.admin:
+        if self.user == user:
             ventana = Toplevel(master=self.ventana)
             ventana.geometry('300x200')
             username = StringVar()
             password = StringVar()
             nombreUser = Label(ventana, text="Nombre Usuario").grid(row=1, column=1)
             userName = Entry(ventana,text=self.user.getName(), textvariable=username, width=15).grid(row=1, column=2)
-            nombreUser = Label(ventana, text="Contraseña").grid(row=2, column=1)
-            userName = Entry(ventana, show="*", textvariable=password, width=15).grid(row=2, column=2)
+            lPpassword = Label(ventana, text="Contraseña").grid(row=2, column=1)
+            tpassword = Entry(ventana, show="*", textvariable=password, width=15).grid(row=2, column=2)
             btnEditar = Button(ventana, text="Editar", command=lambda: self.editarUsuario(user,username.get(),password.get(),ventana))
             btnEditar.grid(row=3, column=2)
             btncerrar = Button(ventana, text="Cerrar", command=lambda: self.cerrarVentana(ventana, )).grid(row=4, column=2)
-            #ventana.mainloop()
+            ventana.mainloop()
         else:
-            pass
+            if self.admin:
+                ventana = Toplevel(master=self.ventana)
+                ventana.geometry('300x200')
+                username = StringVar()
+                password = StringVar()
+                nombreUser = Label(ventana, text="Nombre Usuario").grid(row=1, column=1)
+                userName = Entry(ventana, text=self.user.getName(), textvariable=username, width=15).grid(row=1,
+                                                                                                          column=2)
+                btnEditar = Button(ventana, text="Editar",
+                                   command=lambda: self.editarUsuario(user, username.get(), user.password,
+                                                                      ventana))
+                btnEditar.grid(row=3, column=2)
+                btncerrar = Button(ventana, text="Cerrar", command=lambda: self.cerrarVentana(ventana, )).grid(
+                    row=4, column=2)
+                ventana.mainloop()
+            else:
+                pass
 
     def cerrarVentana(self,ventana):
-        ventana.quit()
+        #ventana.quit()
         ventana.destroy()
 
     def ventanaCrearusuarios(self):
@@ -136,14 +152,14 @@ class Desktop:
             isAdmin = BooleanVar()
             nombreUser = Label(self.ventanaCrearusuario, text="Nombre Usuario").grid(row=1, column=1)
             userName = Entry(self.ventanaCrearusuario, textvariable=username, width=15).grid(row=1, column=2)
-            nombreUser = Label(self.ventanaCrearusuario, text="Contraseña").grid(row=2, column=1)
-            userName = Entry(self.ventanaCrearusuario, show="*", textvariable=password, width=15).grid(row=2, column=2)
+            lpassword = Label(self.ventanaCrearusuario, text="Contraseña").grid(row=2, column=1)
+            tpassword = Entry(self.ventanaCrearusuario, show="*", textvariable=password, width=15).grid(row=2, column=2)
             adminCheck = Checkbutton(self.ventanaCrearusuario, text="¿Administrador?", variable=isAdmin).grid(row=3, column=1)
             btnCrear = Button(self.ventanaCrearusuario, text="Crear",
                                  command=lambda: self.crearUsuario(username.get(),password.get(), isAdmin.get(),self.ventanaCrearusuario)).grid(row=4, column=2)
             btnCerrar = Button(self.ventanaCrearusuario, text="Cerrar",
                               command=lambda: self.cerrarVentana(self.ventanaCrearusuario)).grid(row=5,column=2)
-            #self.ventanaCrearusuario.mainloop()
+            self.ventanaCrearusuario.mainloop()
         else:
             pass
 
@@ -185,7 +201,7 @@ class Desktop:
         self.exploradorArchivos.geometry('800x400')
         self.btnRegresar = Button(self.exploradorArchivos, text="Regresar",command=lambda: self.showFrame(self.cortarDireccion(), ))
         self.btnRegresar.grid(row=1, column=2)
-        self.btnNuevo = Button(self.exploradorArchivos, text="Nueva Carpeta",command=self.crearFolder)
+        self.btnNuevo = Button(self.exploradorArchivos, text="Nueva Carpeta",command=self.ventanaCrearFolder)
         self.btnNuevo.grid(row=1, column=3)
 
         self.lfexplorador = LabelFrame(self.exploradorArchivos,padx=30, pady=10)
@@ -222,9 +238,22 @@ class Desktop:
             btnAbrir = Button(self.lfexplorador, text="Abrir",command=lambda u=files[f]: self.abrirArchivo(u))
             btnAbrir.grid(row=f, column=2)
 
-    def crearFolder(self):
-        pass
+    def ventanaCrearFolder(self):
+        ventana = Toplevel(master=self.ventana)
+        ventana.geometry('200x200')
+        folderName = StringVar()
+        nombreUser = Label(ventana, text="Nombre Folder").grid(row=1, column=1)
+        userName = Entry(ventana, textvariable=folderName, width=15).grid(row=1, column=2)
+        btnFolder = Button(ventana,text="Crear",command=lambda:self.crearFolder(folderName.get(),ventana)).grid(row=2, column=1)
+        btnCerrar = Button(ventana, text="Cerrar",command=lambda: self.cerrarVentana(ventana)).grid(row=2, column=2)
 
+    def crearFolder(self,name,ventana):
+        try:
+            os.mkdir(self.rutaActual+"/"+name)
+            self.cerrarVentana(ventana)
+            self.showFrame("")
+        except FileExistsError:
+            pass
 
 
     def abrirArchivo(self,ruta):

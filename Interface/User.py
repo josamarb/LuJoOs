@@ -27,6 +27,9 @@ class User:
     def crearDirectorio(self):
         self.path="../Users/"+self.name
         os.makedirs(self.path)
+        os.makedirs(self.path+"/Documentos")
+        os.makedirs(self.path + "/Imágenes")
+        os.makedirs(self.path + "/Musica")
 
     def getName(self):
         return self.name

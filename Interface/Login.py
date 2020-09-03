@@ -48,7 +48,8 @@ class Login:
             userLogged.setUsuarios(self.users)
             userLogged.iniciar()
         else:
-            messagebox.showinfo(message="Password Wrong", title="Password Wrong")
+            pass
+            #messagebox.showinfo(message="Password Wrong", title="Password Wrong")
 
     def getUsers(self):
         return self.users
