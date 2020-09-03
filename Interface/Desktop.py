@@ -55,17 +55,19 @@ class Desktop:
     def showMenu(self):
         if self.estadoMenu:
             self.lfInicio = LabelFrame(self.ventana, padx=30, pady=40)
-            self.lfInicio.place(x=0, y=555)
+            self.lfInicio.place(x=0, y=455)
             self.btnCrearUsuario = Button(self.lfInicio, text=" Crear Usuario ", command=self.ventanaCrearusuarios)
             self.btnCrearUsuario.grid(row=1,column=1)
-            self.btnEliminarusuario = Button(self.lfInicio, text=" Eliminar Usuario ", command=self.ventanaEliminarUsuarios)
-            self.btnEliminarusuario.grid(row=2, column=1)
+            self.btnAdministrarusuario = Button(self.lfInicio, text=" Administrar Usuarios ", command=self.ventanaAdministrarUsuarios)
+            self.btnAdministrarusuario.grid(row=2, column=1)
+            self.btnEditarusuario = Button(self.lfInicio, text=" Editar Usuario ",command=lambda :self.ventanaEditarUsuarios(self.user))
+            self.btnEditarusuario.grid(row=3, column=1)
             self.btnExplorador = Button(self.lfInicio, text=" Explorador ", command=self.exploradorArchivos)
-            self.btnExplorador.grid(row=3, column=1)
+            self.btnExplorador.grid(row=4, column=1)
             self.btnCerrarSesion = Button(self.lfInicio, text=" Cerrar Sesion ", command=self.cerrarSesion)
-            self.btnCerrarSesion.grid(row=4, column=1)
+            self.btnCerrarSesion.grid(row=5, column=1)
             self.btnApagar = Button(self.lfInicio, text=" Apagar ", command=self.apagar)
-            self.btnApagar.grid(row=5, column=1)
+            self.btnApagar.grid(row=6, column=1)
             self.estadoMenu=False
         else:
             self.cerrarMenu()
@@ -87,18 +89,39 @@ class Desktop:
 
     #---------------------------Administrar Usuarios-----------------------------------------------------------
 
-    def ventanaEliminarUsuarios(self):
+    def ventanaAdministrarUsuarios(self):
         if self.admin:
-            ventana = Tk()
+            self.ventanaAdministrarUsuarios = Tk()
+            self.ventanaAdministrarUsuarios.geometry('300x200')
             for i in range(len(self.users)) :
-                nombreUser = Label(ventana, text=self.users[i].getName())
+                nombreUser = Label(self.ventanaAdministrarUsuarios, text=self.users[i].getName())
                 nombreUser.grid(row=i, column=1)
-                btnEliminar = Button(ventana, text="Eliminar", command=lambda u=self.users[i]: self.eliminarUsuario(u,ventana, ))
+                btnEliminar = Button(self.ventanaAdministrarUsuarios, text="Eliminar", command=lambda u=self.users[i]: self.eliminarUsuario(u,self.ventanaAdministrarUsuarios, ))
                 btnEliminar.grid(row=i, column=2)
-            btncerrar = Button(ventana, text="Cerrar", command=lambda: self.cerrarVentana(ventana, )).grid(row=len(self.users), column=2)
-            ventana.mainloop()
+                btnEditar = Button(self.ventanaAdministrarUsuarios, text="Editar",command=lambda u=self.users[i]: self.ventanaEditarUsuarios(u))
+                btnEditar.grid(row=i, column=3)
+
+            btncerrar = Button(self.ventanaAdministrarUsuarios, text="Cerrar", command=lambda: self.cerrarVentana(self.ventanaAdministrarUsuarios, )).grid(row=len(self.users), column=2)
+            self.ventanaAdministrarUsuarios.mainloop()
         else:
-            messagebox.showinfo(message="No tiene derechos de administrador", title="Restringido")
+            pass
+
+    def ventanaEditarUsuarios(self,user):
+        if self.admin:
+            ventana = Toplevel(master=self.ventana)
+            ventana.geometry('300x200')
+            username = StringVar()
+            password = StringVar()
+            nombreUser = Label(ventana, text="Nombre Usuario").grid(row=1, column=1)
+            userName = Entry(ventana,text=self.user.getName(), textvariable=username, width=15).grid(row=1, column=2)
+            nombreUser = Label(ventana, text="Contraseña").grid(row=2, column=1)
+            userName = Entry(ventana, show="*", textvariable=password, width=15).grid(row=2, column=2)
+            btnEditar = Button(ventana, text="Editar", command=lambda: self.editarUsuario(user,username.get(),password.get(),ventana))
+            btnEditar.grid(row=3, column=2)
+            btncerrar = Button(ventana, text="Cerrar", command=lambda: self.cerrarVentana(ventana, )).grid(row=4, column=2)
+            #ventana.mainloop()
+        else:
+            pass
 
     def cerrarVentana(self,ventana):
         ventana.quit()
@@ -106,23 +129,23 @@ class Desktop:
 
     def ventanaCrearusuarios(self):
         if self.admin:
-            ventana = Tk()
-            ventana.geometry('300x200')
+            self.ventanaCrearusuario = Toplevel(master=self.ventana)
+            self.ventanaCrearusuario.geometry('300x200')
             username = StringVar()
             password = StringVar()
             isAdmin = BooleanVar()
-            nombreUser = Label(ventana, text="Nombre Usuario").grid(row=1, column=1)
-            userName = Entry(ventana, textvariable=username, width=15).grid(row=1, column=2)
-            nombreUser = Label(ventana, text="Contraseña").grid(row=2, column=1)
-            userName = Entry(ventana, show="*", textvariable=password, width=15).grid(row=2, column=2)
-            adminCheck = Checkbutton(ventana, text="¿Administrador?", variable=isAdmin).grid(row=3, column=1)
-            btnCrear = Button(ventana, text="Crear",
-                                 command=lambda: self.crearUsuario(username.get(),password.get(), isAdmin.get(),ventana)).grid(row=4, column=2)
-            btnCerrar = Button(ventana, text="Cerrar",
-                              command=lambda: self.cerrarVentana(ventana)).grid(row=5,column=2)
-            ventana.mainloop()
+            nombreUser = Label(self.ventanaCrearusuario, text="Nombre Usuario").grid(row=1, column=1)
+            userName = Entry(self.ventanaCrearusuario, textvariable=username, width=15).grid(row=1, column=2)
+            nombreUser = Label(self.ventanaCrearusuario, text="Contraseña").grid(row=2, column=1)
+            userName = Entry(self.ventanaCrearusuario, show="*", textvariable=password, width=15).grid(row=2, column=2)
+            adminCheck = Checkbutton(self.ventanaCrearusuario, text="¿Administrador?", variable=isAdmin).grid(row=3, column=1)
+            btnCrear = Button(self.ventanaCrearusuario, text="Crear",
+                                 command=lambda: self.crearUsuario(username.get(),password.get(), isAdmin.get(),self.ventanaCrearusuario)).grid(row=4, column=2)
+            btnCerrar = Button(self.ventanaCrearusuario, text="Cerrar",
+                              command=lambda: self.cerrarVentana(self.ventanaCrearusuario)).grid(row=5,column=2)
+            #self.ventanaCrearusuario.mainloop()
         else:
-            messagebox.showinfo(message="No tiene derechos de administrador", title="Restringido")
+            pass
 
     def eliminarUsuario(self,u,ventana):
         if self.user.userEliminar(u):
@@ -130,10 +153,17 @@ class Desktop:
         else:
             print("error")
 
+    def editarUsuario(self,user,name,password,ventana):
+        if self.user.userEditar(user,name,password,):
+            self.cerrarVentana(ventana)
+        else:
+            print("error")
+
     def crearUsuario(self,name, password, check,ventana):
-        print(name)
-        if len(name) == 0 or len(password)==0:
-            self.user.crearUsuario("Enola", "12345", check)
+        if len(name) == 0 and len(password)==0 and check:
+            pass
+        elif len(password)==0 and not check:
+            self.user.crearUsuario(name, password, check)
             self.cerrarVentana(ventana)
         else:
             self.user.crearUsuario(name,password,check)
@@ -155,8 +185,8 @@ class Desktop:
         self.exploradorArchivos.geometry('800x400')
         self.btnRegresar = Button(self.exploradorArchivos, text="Regresar",command=lambda: self.showFrame(self.cortarDireccion(), ))
         self.btnRegresar.grid(row=1, column=2)
-        #self.btnNuevo = Button(self.exploradorArchivos, text="Nuevo Archivo de texto")
-        #self.btnNuevo.grid(row=1, column=3)
+        self.btnNuevo = Button(self.exploradorArchivos, text="Nueva Carpeta",command=self.crearFolder)
+        self.btnNuevo.grid(row=1, column=3)
 
         self.lfexplorador = LabelFrame(self.exploradorArchivos,padx=30, pady=10)
         self.lfexplorador.grid(row=2, column=1)
@@ -192,13 +222,15 @@ class Desktop:
             btnAbrir = Button(self.lfexplorador, text="Abrir",command=lambda u=files[f]: self.abrirArchivo(u))
             btnAbrir.grid(row=f, column=2)
 
-    def crearArchivoFolder(self):
-        ventana = Tk()
+    def crearFolder(self):
+        pass
+
 
 
     def abrirArchivo(self,ruta):
-        r = self.rutaActual.split("Users")
-        os.system("start "+self.absoluta+r[1]+"/"+ruta)
+        rp = self.rutaActual.split("Users")
+        #print(self.absoluta+rp[1]+"/"+ruta)
+        os.system("start "+self.absoluta+rp[1]+'/"'+ruta+'"')
         """"
         extension = ruta.split(".")[len(ruta.split("."))-1]
         if extension == "txt":

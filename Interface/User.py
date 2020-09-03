@@ -1,5 +1,7 @@
 from Interface.Desktop import Desktop
 import os
+import shutil
+from os.path import isfile, join, isdir
 from Archivos.escritorJSON import escritorJSON
 
 class User:
@@ -9,11 +11,13 @@ class User:
         self.password = password
         self.admin = admin
         self.imagePath = imgPath
+        self.absoluta = "C:/Users/Samuel/Documents/SamPython/LuJo/Users"
         try:
             self.crearDirectorio()
         except FileExistsError:
             pass
         self.pathDirectorio = "../Users/"+self.name
+        self.path = "Users/"+self.name
         self.desktop = window
         self.usuarios = []
 
@@ -45,7 +49,26 @@ class User:
         nueva = []
         for u in self.usuarios:
             if u.getName() == user.getName():
-                pass
+                contenido = os.listdir(self.absoluta)
+                carpetas = [nombre for nombre in contenido if isdir(join(self.absoluta, nombre))]
+                shutil.rmtree(path="../Users/"+u.getName())
+            else:
+                nueva.append(u)
+        self.setUsuarios(nueva)
+        writter.escribirUsuarios(nueva)
+        return True
+
+    def userEditar(self,user,name,password):
+        writter = escritorJSON()
+        nueva = []
+        for u in self.usuarios:
+            if u.getName() == user.getName():
+                if u.getName()!= name:
+                    u.name = name
+                    os.renames("../"+u.path,"../Users/"+name)
+                if u.getPassword()!=password:
+                    u.password = password
+                nueva.append(u)
             else:
                 nueva.append(u)
         self.setUsuarios(nueva)
